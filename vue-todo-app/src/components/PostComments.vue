@@ -56,9 +56,12 @@
     methods: {
       deleteComment(commentId) {
         this.deleteError = '';
+        const commentIndex = this.comments.findIndex((com) => com.id === commentId);
+        const deletedComment = this.comments[commentIndex];
+        this.comments = this.comments.filter((com) => com.id !== commentId);
+
         deleteComment(commentId)
         .then(() => {
-          this.comments = this.comments.filter((com) => com.id !== commentId)
         })
         .catch(() => {
           this.deleteError = `Failed to delete comment #${commentId}. Please try again.`;
