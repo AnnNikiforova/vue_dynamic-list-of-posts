@@ -1,7 +1,7 @@
 import { client } from "../utils/httpClient";
 
-export const getPosts = () => {
-  return client.get(`/posts?userId=3739`);
+export const getPosts = (userId) => {
+  return client.get(`/posts?userId=${userId}`);
 };
 
 export const addPost = (data) => {

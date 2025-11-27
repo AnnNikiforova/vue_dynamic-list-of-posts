@@ -25,7 +25,7 @@ export default {
   },
   mounted() {
     this.loading = true
-    getPosts()
+    getPosts(this.userId)
       .then(({ data }) => {
         this.posts = data
       })
@@ -77,14 +77,22 @@ export default {
           }
         })
       })
+      .catch(() => {
+        this.errorMessage = `Can't update post #${postId}. Please try again.`;
+      })
     },
 
     deletePost(postId) {
-      deletePost(postId).then(() => {
+      this.errorMessage = '';
+      deletePost(postId)
+      .then(() => {
         this.posts = this.posts.filter((post) => post.id !== postId)
+        this.selectedPost = {}
+        this.isActiveSidebar = false
       })
-      this.selectedPost = {}
-      this.isActiveSidebar = false
+      .catch(() => {
+        this.errorMessage = `Can't delete post #${postId}. Please try again.`;
+      });
     },
   },
 }

@@ -17,6 +17,8 @@
         body: '',
         inputError: '',
         bodyError: '',
+        submitError: '',
+        isLoadingSubmit: false,
       }
     },
     emits: ['addPost', 'updatePost', 'closeEditing', 'closeSidebar'],
@@ -42,6 +44,7 @@
       clearErrors() {
         this.inputError = ''
         this.bodyError = ''
+        this.submitError = ''
       },
       handleSubmit() {
         const titleTrimmed = this.title.trim()
@@ -59,13 +62,24 @@
           return;
         }
 
+        this.submitError = '';
+
         const userId = this.userId || this.selectedPost.userId
         const postId = this.selectedPost?.id
 
         if (this.formName === 'createPost') {
-          addPost({ userId, title: titleTrimmed, body: bodyTrimmed }).then(({ data }) => {
+          this.isLoadingSubmit = true;
+
+          addPost({ userId, title: titleTrimmed, body: bodyTrimmed })
+          .then(({ data }) => {
             this.$emit('addPost', data)
           })
+          .catch(() => {
+            this.submitError = 'Failed to create post. Please check your network and try again.';
+          })
+          .finally(() => {
+            this.isLoadingSubmit = false;
+          });
         } else {
           this.$emit('updatePost', { postId, title: titleTrimmed, body: bodyTrimmed })
           this.$emit('closeEditing')
@@ -78,6 +92,11 @@
 <template>
   <div class="content">
     <h2>{{ formName === 'createPost' ? 'Create new post' : 'Post editing' }}</h2>
+
+    <div v-if="submitError" class="notification is-danger is-light">
+        {{ submitError }}
+    </div>
+
     <form @submit.prevent="handleSubmit">
       <InputField
         v-model="title"
@@ -100,7 +119,12 @@
 
       <div class="field is-grouped mt-3">
         <div class="control">
-          <button type="submit" class="button is-link">{{ formName === 'createPost' ? 'Create' : 'Save' }}</button>
+          <button 
+            type="submit" class="button is-link" 
+            :class="{ 'is-loading': isLoadingSubmit }"
+          >
+            {{ formName === 'createPost' ? 'Create' : 'Save' }}
+          </button>
         </div>
         <div class="control">
           <button

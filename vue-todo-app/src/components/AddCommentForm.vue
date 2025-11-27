@@ -22,6 +22,7 @@
         bodyError: "",
         isLoadingSubmit: false,
         userName: "",
+        submitError: "",
       };
     },
     emits: ["closeCommentForm", "addComment"],
@@ -36,6 +37,7 @@
         this.inputNameError = "";
         this.inputEmailError = "";
         this.bodyError = "";
+        this.submitError = "";
       },
       handleSubmit() {
         const postId = this.postId;
@@ -69,13 +71,14 @@
         }
 
         this.isLoadingSubmit = true;
+        this.submitError = "";
         addComment({ postId, name, email, body })
           .then(({ data }) => {
             this.$emit("addComment", data);
             this.body = "";
           })
           .catch((error) => {
-            throw new Error(error);
+            this.submitError = "Failed to add comment. Please check your network and try again.";
           })
           .finally(() => {
             this.isLoadingSubmit = false;
@@ -87,6 +90,10 @@
 
   <template>
     <form @submit.prevent="handleSubmit" novalidate>
+      <div v-if="submitError" class="notification is-danger is-light mb-4">
+        {{ submitError }}
+      </div>
+
       <InputField
         v-model="inputName"
         :inputError="inputNameError"
@@ -126,8 +133,14 @@
             Add comment
           </button>
         </div>
-        <div class="control" @click="$emit('closeCommentForm')">
-          <button type="reset" class="button is-link is-light">Cancel</button>
+        <div class="control">
+          <button
+            type="reset"
+            class="button is-link is-light"
+            @click="$emit('closeCommentForm'); clearErrors()" 
+          >
+            Cancel
+          </button>
         </div>
       </div>
     </form>

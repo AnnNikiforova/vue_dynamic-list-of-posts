@@ -16,11 +16,6 @@ import PostsList from './components/PostsList.vue';
         isActiveLoginPage: true,
       };
     },
-    // watch: {
-    //   user() {
-    //     console.log(this.user);
-    //   },
-    // },
     mounted() {
       const savedUser = JSON.parse(localStorage.getItem("user"));
       if (savedUser) {

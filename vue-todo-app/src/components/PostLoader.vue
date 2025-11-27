@@ -5,8 +5,8 @@
 </script>
 
 <template>
-  <div className="is-flex is-justify-content-center is-align-items-center mt-2">
-    <div className="lds-ring">
+  <div class="is-flex is-justify-content-center is-align-items-center mt-2">
+    <div class="lds-ring">
       <div></div>
       <div></div>
       <div></div>

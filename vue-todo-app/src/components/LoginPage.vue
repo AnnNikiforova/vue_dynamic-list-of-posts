@@ -40,10 +40,8 @@
 
         const name = this.name
         const email = this.email
-        const username = this.username || null
-        const phone = this.phone || null
 
-        addUser({ name, username, email, phone })
+        addUser({ name, email })
           .then(() => {
             return this.handleLogin(email)
           })

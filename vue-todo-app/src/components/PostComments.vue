@@ -18,6 +18,7 @@
         isFormActive: false,
         loading: false,
         errorMessage: '',
+        deleteError: '',
       }
     },
     mounted() {
@@ -54,10 +55,14 @@
     },
     methods: {
       deleteComment(commentId) {
-        this.comments = this.comments.filter((com) => com.id !== commentId)
-        deleteComment(commentId).then(() => {
+        this.deleteError = '';
+        deleteComment(commentId)
+        .then(() => {
           this.comments = this.comments.filter((com) => com.id !== commentId)
         })
+        .catch(() => {
+          this.deleteError = `Failed to delete comment #${commentId}. Please try again.`;
+        });
       },
     },
   }
@@ -70,10 +75,14 @@
     {{ errorMessage }}
   </div>
 
+  <div v-else-if="deleteError" class="notification is-danger is-light mb-4">
+    {{ deleteError }}
+  </div>
+
   <template v-else>
     <article v-for="comment of comments" :key="comment.id" class="message is-small">
       <div class="message-header">
-        <a href="`mailto:${comment.email}`"> {{ comment.name }} </a>
+        <a :href="`mailto:${comment.email}`"> {{ comment.name }} </a>
         <button
           type="button"
           class="delete is-small"
